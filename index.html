@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Slider</title>
+    <link rel="stylesheet" href="slider.css">
+</head>
+<body>
+        <input type="file" id="optBtn" accept="/*image" multiple hidden>
+        <button><label for="optBtn">select images</label></button>
+        <button type="button" id="slideShowBtn">startSlideShow</button>
+        <button type="button" id="deleteBtn">deleteImages</button>
+        <button type="button" id="saveSlideShow">saveSlideShow</button>
+        <button type="button" id="reloadSlideShow">reloadSlideShow</button>
+        <button type="button" id="customize">Customize</button>
+        <button type="button" id="stopCustomize" disabled>stopCustomize</button>
+    <br>
+    <br>
+    <br>
+    <div class="gallery drag">
+
+    </div>
+    <div id="slideShow" class="drag">
+        <img id="previewImage">
+        <!--  
+            <div class="slideShowButton">
+                <button type="buttton" id="playSlide">play</button>
+            </div>
+         -->
+    </div>
+
+    <p id="demo"></p>
+    <script src="slider.js"></script>
+</body>
+</html>
