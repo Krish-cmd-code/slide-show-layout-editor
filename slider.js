@@ -7,6 +7,7 @@ const deleteBtn=document.getElementById("deleteBtn");
 const slideShow=document.getElementById("slideShowBtn");
 const saveSlideShow=document.getElementById("saveSlideShow");
 const reloadSlideShow=document.getElementById("reloadSlideShow");
+let DELAY;
 
 
 saveSlideShow.addEventListener("click",function(){
@@ -22,14 +23,7 @@ saveSlideShow.addEventListener("click",function(){
 });
 
 reloadSlideShow.addEventListener("click",function(){
-    /*
-    const data = JSON.parse(localStorage.getItem("data")) || [];
-    photos.length=0;
-    data.forEach(src=>{
-        photos.push(src);
-    });
-    renderGallery();
-    */
+
     
     photos.length=0;
     photos=JSON.parse(localStorage.getItem("data"));
@@ -64,7 +58,7 @@ photos.forEach(photo=>{
         checkBox.type="checkbox";
         checkBox.classList.add("select");
         
-        card.appendChild(checkBox);
+        card.append(checkBox);
         card.append(img);
         gallery.append(card);
     });
@@ -122,7 +116,11 @@ slideShow.addEventListener("click",function(){
             }
         });
 
-        slideInterval=setInterval(startSlideShow,2000);
+        DELAY=document.getElementById("delay").value;
+        DELAY=Number(DELAY)*1000;
+        console.log(`${DELAY}`);
+        //  index=0;
+        slideInterval=setInterval(startSlideShow,DELAY);
 });
 
 function startSlideShow(){
