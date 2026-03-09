@@ -6,10 +6,57 @@ let slideInterval;
 const deleteBtn=document.getElementById("deleteBtn");
 const slideShow=document.getElementById("slideShowBtn");
 const saveSlideShow=document.getElementById("saveSlideShow");
-const reloadSlideShow=document.getElementById("reloadSlideShow");
+// const reloadSlideShow=document.getElementById("reloadSlideShow");
+const loadJson=document.getElementById("reloadJson");
 let DELAY;
 
+saveSlideShow.addEventListener("click", function () {
+    console.log(`slides.length:${slides.length}`);
+    // console.log(slides);
+    let combinedImages = [
+        // ...new Set([...slides, ...photos])
+        ...new Set([ ...photos])
+    ];
 
+    if (combinedImages.length === 0) {
+        alert("No images to save!");
+        return;
+    }
+    // console.log(`combinedImages:${combinedImages}`);
+    // console.log(combinedImages);
+    console.log(photos);
+    console.log(slides);
+    const data = {
+        images:combinedImages.map(src => ({
+            src:src,
+            isSelected: slides.some(slide => slide.src === src)
+        })),
+        // selectedImages: selectedImages,
+        // slideshowImages: slideshowImages,
+        // totalUniqueImages: combinedImages.length,
+        savedAt: new Date().toLocaleString(),
+        delay: document.getElementById("delay").value
+    };
+        data.images.forEach(image=>{
+            console.log(`isSelected:${image.isSelected}`);
+        });
+
+    const jsonString = JSON.stringify(data, null, 2);
+
+    const blob = new Blob([jsonString], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "gallery_data.json";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+});
+/*
 saveSlideShow.addEventListener("click",function(){
 
 
@@ -21,7 +68,70 @@ saveSlideShow.addEventListener("click",function(){
     localStorage.setItem("data",data);
     
 });
+*/
 
+loadJson.addEventListener("change", function () {
+
+    const file = loadJson.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+
+        const data = JSON.parse(e.target.result);
+
+        // Clear existing data
+        photos = [];
+        selected = [];
+        // slideshowImages = [];
+        // gallery.innerHTML = "";
+
+        // Restore selected images
+        addJsonData(data.images);
+        document.getElementById("delay").value=Number(data.delay);
+       
+
+        // Recreate gallery
+        // photos.forEach(src => createImageBox(src));
+        alert("Slideshow data loaded successfully!");
+    };
+
+    reader.readAsText(file);
+});
+
+function addJsonData(images){
+    slides.length=0;
+    selected.length=0;
+    photos.length=0;
+    let gallery=document.querySelector(".gallery");
+    gallery.innerHTML="";
+    images.forEach(image=> {
+
+        photos.push(image.src);
+
+        let img=document.createElement("img");
+        const card=document.createElement("div");
+        card.classList.add("card");
+
+        img.src=image.src;
+        let checkBox=document.createElement("input");
+        checkBox.type="checkbox";
+        checkBox.classList.add("select");
+        
+       
+
+        if (image.isSelected) {
+            slides.push(image.src);  //treating sliding images as selected images.
+            checkBox.checked=true;
+        }
+        
+        card.append(checkBox);
+        card.append(img);
+        gallery.append(card);
+    });
+}
+/*
 reloadSlideShow.addEventListener("click",function(){
 
     
@@ -33,6 +143,7 @@ reloadSlideShow.addEventListener("click",function(){
     
 
 });
+*/
 
 document.getElementById("optBtn").addEventListener("change",function(e){
     console.log(e);
