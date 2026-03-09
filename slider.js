@@ -9,6 +9,7 @@ const saveSlideShow=document.getElementById("saveSlideShow");
 // const reloadSlideShow=document.getElementById("reloadSlideShow");
 const loadJson=document.getElementById("reloadJson");
 let DELAY;
+const imageInput=document.getElementById("optBtn");
 
 saveSlideShow.addEventListener("click", function () {
     console.log(`slides.length:${slides.length}`);
@@ -48,7 +49,10 @@ saveSlideShow.addEventListener("click", function () {
 
     const link = document.createElement("a");
     link.href = url;
-    link.download = "gallery_data.json";
+
+    const fname=prompt("name file to save","gallery_data");
+    link.download=fname+".json";
+    // link.download = "gallery_data.json";
 
     document.body.appendChild(link);
     link.click();
@@ -144,7 +148,7 @@ reloadSlideShow.addEventListener("click",function(){
 
 });
 */
-
+/*
 document.getElementById("optBtn").addEventListener("change",function(e){
     console.log(e);
     
@@ -154,25 +158,56 @@ document.getElementById("optBtn").addEventListener("change",function(e){
     renderGallery();
     
 });
+*/
+
+imageInput.addEventListener("change",function(e){
+    const files = Array.from(imageInput.files);
+    console.log(files);
+    let loaded=0;
+    files.forEach(file=>{
+        const reader=new FileReader();
+        reader.onload = function(e){
+            const base64=e.target.result;
+            photos.push(base64);
+
+            loaded++;
+            if(loaded===files.length){
+                renderGallery();
+            }
+        };
+
+        reader.readAsDataURL(file);
+    });
+});
 
 
 function renderGallery(){
 let gallery=document.querySelector(".gallery");
+const card=document.querySelectorAll(".gallery .card");
+        selected.length=0;
+        card.forEach(card=>{
+            if(card.children[0].checked){
+                console.log(`select pushed`);
+                selected.push(card.children[1]);//image gets push.
+            }
+        });
+
 gallery.innerHTML="";
 photos.forEach(photo=>{
         let img=document.createElement("img");
         const card=document.createElement("div");
         card.classList.add("card");
-
         img.src=photo;
         let checkBox=document.createElement("input");
         checkBox.type="checkbox";
+        checkBox.checked=selected.some(select => select.src === photo);
         checkBox.classList.add("select");
         
         card.append(checkBox);
         card.append(img);
         gallery.append(card);
     });
+
 }
 
 function addPhotos(){
@@ -227,6 +262,8 @@ slideShow.addEventListener("click",function(){
             }
         });
 
+        const previewImg=document.getElementById("previewImage");
+        previewImg.src="";
         DELAY=document.getElementById("delay").value;
         DELAY=Number(DELAY)*1000;
         console.log(`${DELAY}`);
@@ -256,7 +293,7 @@ const stopCustomize=document.getElementById("stopCustomize");
 
 let isClickCustomize=false;
 customize.addEventListener("click",(e)=>{
-    const buttons=document.querySelectorAll("button");
+    const buttons=document.querySelectorAll(".dragon");
     buttons.forEach((button)=>{
         /*
         const rect = button.getBoundingClientRect();
@@ -299,7 +336,8 @@ customize.addEventListener("click",(e)=>{
     });
     if(!isClickCustomize){
         isClickCustomize=true;
-        const btn = document.querySelectorAll("button");
+        // const btn = document.querySelectorAll("button");
+        const btn = document.querySelectorAll(".dragon");
         const body = document.querySelector("body");
         const stopCustomize=document.getElementById("stopCustomize");
         stopCustomize.disabled=false;
