@@ -14,6 +14,28 @@ body{
     position:relative;
 }
 
+.dropBox{
+    width:200px;
+    height:80px;
+    display:flex;
+    align-items:center;
+    background-color: rgba(255, 0, 0, 0.756);
+    color:white;
+    justify-content:center;
+    border-radius: 5px;
+    border:5px solid black;
+    margin-top:20px;
+    /* background-color: red;
+    color:white;
+    padding:5px;
+    border-radius: 5px;
+    border:5px solid black; */
+}
+
+h3{
+    color:white;
+}
+
 .dragon{
     /* position:relative; */
 }
@@ -27,6 +49,25 @@ button{
     flex-wrap: wrap;
     margin-bottom: 10px;
     
+}
+
+.reorder{
+    display: flex;
+    /* justify-content: center; */
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+    
+}
+.galleryContainer{
+    border:5px solid green;
+    margin:5px;
+    padding:10px;
+}
+#reorder{
+    width:100%;
+    height:120px;
+    /* margin-top:0px; */
+    background-color: gray;
 }
 .card{
     border:5px solid green;

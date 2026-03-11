@@ -1,6 +1,7 @@
 let photos=[];
 let selected=[];
 let slides=[];
+let slidePhotos=[];
 let index=0;
 let slideInterval;
 const deleteBtn=document.getElementById("deleteBtn");
@@ -11,6 +12,80 @@ const loadJson=document.getElementById("reloadJson");
 let DELAY;
 const imageInput=document.getElementById("optBtn");
 
+let draggedCard=null;
+const dropBox=document.getElementById("dropBox");
+dropBox.addEventListener("dragover",(e)=>{
+    e.preventDefault();
+});
+dropBox.addEventListener("drop",(e)=>{
+    e.preventDefault();
+    if(draggedCard){
+        draggedCard.remove();
+        draggedCard=null;
+    }
+}); 
+
+
+
+const reorder=document.getElementById("reorder");
+
+reorder.addEventListener("dragover",(e)=>{
+    e.preventDefault();
+});
+reorder.addEventListener("drop",(e)=>{
+    e.preventDefault();
+    const id=e.dataTransfer.getData("photoId");
+    console.log(id);
+    // e.dataTransfer.setData("photoId",photo.id);
+    const photo=photos.find(p => id==p.id);  //remember for comparison we've used '==' operator rather than '===' operator.
+   
+
+    if(!photo){
+        console.log(`empty photo`);return;
+    }
+ console.log(id);
+    const card=document.createElement("div");
+    card.classList.add("card");
+    const img = document.createElement("img");
+    img.src=photo.src;
+    applyDragToCardOfReorder(card);
+    card.appendChild(img);
+    reorder.appendChild(card);
+});
+
+function applyDragToCardOfReorder(card){
+    card.draggable=true;
+    card.addEventListener("dragstart",(e)=>{
+        draggedCard=card;
+    });
+
+    card.addEventListener("dragover", (e) => {
+    e.preventDefault(); 
+    });
+
+    card.addEventListener("drop", (e) => {
+
+        e.preventDefault();
+
+        if (!draggedCard || draggedCard === card) return;
+
+        const container = card.parentNode;
+
+        const rect = card.getBoundingClientRect();
+        const offset = e.clientY - rect.top;
+
+        if (offset > rect.height / 2) {
+            // insert after
+            container.insertBefore(draggedCard, card.nextSibling);
+        } else {
+            // insert before
+            container.insertBefore(draggedCard, card);
+        }
+
+    });
+
+}
+
 saveSlideShow.addEventListener("click", function () {
     console.log(`slides.length:${slides.length}`);
     // console.log(slides);
@@ -18,23 +93,23 @@ saveSlideShow.addEventListener("click", function () {
         // ...new Set([...slides, ...photos])
         ...new Set([ ...photos])
     ];
+    addSlides();
+    addSlidePhotos();
+    let slideImages=[ ...new Set([...slidePhotos])];
 
+    console.log(`slides are`);
+    console.log(slides);
     if (combinedImages.length === 0) {
         alert("No images to save!");
-        return;
+       // return;
     }
     // console.log(`combinedImages:${combinedImages}`);
     // console.log(combinedImages);
     console.log(photos);
     console.log(slides);
     const data = {
-        images:combinedImages.map(src => ({
-            src:src,
-            isSelected: slides.some(slide => slide.src === src)
-        })),
-        // selectedImages: selectedImages,
-        // slideshowImages: slideshowImages,
-        // totalUniqueImages: combinedImages.length,
+        images:combinedImages,
+        slideImages:slideImages,
         savedAt: new Date().toLocaleString(),
         delay: document.getElementById("delay").value
     };
@@ -52,7 +127,6 @@ saveSlideShow.addEventListener("click", function () {
 
     const fname=prompt("name file to save","gallery_data");
     link.download=fname+".json";
-    // link.download = "gallery_data.json";
 
     document.body.appendChild(link);
     link.click();
@@ -88,11 +162,10 @@ loadJson.addEventListener("change", function () {
         // Clear existing data
         photos = [];
         selected = [];
-        // slideshowImages = [];
-        // gallery.innerHTML = "";
+        slides=[];
 
         // Restore selected images
-        addJsonData(data.images);
+        addJsonData(data);
         document.getElementById("delay").value=Number(data.delay);
        
 
@@ -102,38 +175,18 @@ loadJson.addEventListener("change", function () {
     };
 
     reader.readAsText(file);
+    loadJson.value="";
 });
 
-function addJsonData(images){
-    slides.length=0;
-    selected.length=0;
-    photos.length=0;
-    let gallery=document.querySelector(".gallery");
-    gallery.innerHTML="";
-    images.forEach(image=> {
-
-        photos.push(image.src);
-
-        let img=document.createElement("img");
-        const card=document.createElement("div");
-        card.classList.add("card");
-
-        img.src=image.src;
-        let checkBox=document.createElement("input");
-        checkBox.type="checkbox";
-        checkBox.classList.add("select");
-        
-       
-
-        if (image.isSelected) {
-            slides.push(image.src);  //treating sliding images as selected images.
-            checkBox.checked=true;
-        }
-        
-        card.append(checkBox);
-        card.append(img);
-        gallery.append(card);
-    });
+function addJsonData(data){
+    photos=[];
+    photos=data.images;
+    console.log(`now photos:`);
+    console.log(photos);
+    console.log(`now slides`);
+    console.log(slides);
+    slides=data.slideImages;
+    renderGallery();
 }
 /*
 reloadSlideShow.addEventListener("click",function(){
@@ -162,13 +215,15 @@ document.getElementById("optBtn").addEventListener("change",function(e){
 
 imageInput.addEventListener("change",function(e){
     const files = Array.from(imageInput.files);
+    console.log(`image input evernt listener`);
     console.log(files);
     let loaded=0;
     files.forEach(file=>{
         const reader=new FileReader();
         reader.onload = function(e){
             const base64=e.target.result;
-            photos.push(base64);
+            const id=Date.now() + Math.random();// unique id
+            photos.push({src:base64,id:id,isSelected:false});
 
             loaded++;
             if(loaded===files.length){
@@ -178,44 +233,87 @@ imageInput.addEventListener("change",function(e){
 
         reader.readAsDataURL(file);
     });
+    imageInput.value="";
+    console.log(`photos added`);
 });
 
 
 function renderGallery(){
-let gallery=document.querySelector(".gallery");
-const card=document.querySelectorAll(".gallery .card");
-        selected.length=0;
-        card.forEach(card=>{
-            if(card.children[0].checked){
-                console.log(`select pushed`);
-                selected.push(card.children[1]);//image gets push.
-            }
+let gallery=document.querySelector(".gallery");  //will select first galley item.
+// const card=document.querySelectorAll(".gallery .card");
+//         selected.length=0;
+//         card.forEach(card=>{
+//             if(card.children[0].checked){
+//                 console.log(`select pushed`);
+//                 selected.push(card.children[1]);//image gets push.
+//             }
+//         });
+console.log(`enter into renderGallery`);
+gallery.innerHTML="";
+let reorder=document.getElementById("reorder");
+reorder.innerHTML="";
+    photos.forEach(photo=>{
+            let img=document.createElement("img");
+            const card=document.createElement("div");
+            card.classList.add("card");
+
+            // store id in DOM
+            card.dataset.id = photo.id;
+            
+            img.src=photo.src;
+            let checkBox=document.createElement("input");
+            checkBox.type="checkbox";
+
+            checkBox.addEventListener("change", function () {
+
+                    const card = checkBox.closest(".card");
+                    const id = Number(card.dataset.id);
+
+                    const photo = photos.find(p => p.id === id);
+
+                    photo.isSelected = checkBox.checked;
+            });
+            checkBox.checked=photo.isSelected;
+
+            // checkBox.checked=selected.some(select => select.src === photo);
+            checkBox.classList.add("select");
+            
+            addDragTo(card,photo);
+            card.append(checkBox);
+            card.append(img);
+            gallery.append(card);
         });
 
-gallery.innerHTML="";
-photos.forEach(photo=>{
-        let img=document.createElement("img");
-        const card=document.createElement("div");
-        card.classList.add("card");
-        img.src=photo;
-        let checkBox=document.createElement("input");
-        checkBox.type="checkbox";
-        checkBox.checked=selected.some(select => select.src === photo);
-        checkBox.classList.add("select");
-        
-        card.append(checkBox);
-        card.append(img);
-        gallery.append(card);
-    });
+            slides.forEach(src=>{
+                const card=document.createElement("div");
+                card.classList.add("card");
+                const img = document.createElement("img");
+                img.src=src;
+                applyDragToCardOfReorder(card);
+                card.appendChild(img);
+                reorder.appendChild(card);
+            });
+
+
 
 }
 
-function addPhotos(){
-    photos.length=0;
-    const card = document.querySelectorAll(".gallery .card");
-    card.forEach(card=>{
-        photos.push(card.children[1].src);
+function addDragTo(card,photo){
+    card.draggable=true;
+    card.addEventListener("dragstart",(e)=>{
+        e.dataTransfer.setData("photoId",photo.id);
+        console.log(`drag started`);
     });
+}
+function addPhotos(){
+    photos=photos.filter(p=> !p.isSelected);
+    const card = document.querySelectorAll(".gallery .card");
+
+    // card.forEach(card=>{
+    //     photos.push(card);
+    // });
+     console.log(`now photos`);
+    console.log(photos);
 }
 
 deleteBtn.addEventListener("click",function(){
@@ -229,6 +327,7 @@ deleteBtn.addEventListener("click",function(){
             }
             })
     */
+        selected=[];
         const card=document.querySelectorAll(".gallery .card");
         card.forEach(card=>{
             if(card.children[0].checked){
@@ -256,11 +355,15 @@ slideShow.addEventListener("click",function(){
         slideShow.textContent="StopSlideShow";
         const card=document.querySelectorAll(".gallery .card");
         slides.length=0;
-        card.forEach(card=>{
-            if(card.children[0].checked){
-                slides.push(card.children[1]);//image gets push.
-            }
-        });
+        // card.forEach(card=>{
+        //     if(card.children[0].checked){
+        //         slides.push(card.children[1]);//image gets push.
+        //     }
+        // });
+
+        
+        // slides = photos.filter(photo => photo.isSelected);
+        addSlides();
 
         const previewImg=document.getElementById("previewImage");
         previewImg.src="";
@@ -271,6 +374,20 @@ slideShow.addEventListener("click",function(){
         slideInterval=setInterval(startSlideShow,DELAY);
 });
 
+function addSlides(){
+    slides.length=0;
+    const cards=document.querySelectorAll("#reorder .card");
+        cards.forEach(card=>{
+            slides.push(card.children[0]);
+        });
+}
+
+function addSlidePhotos(){
+    slidePhotos=[];
+    slides.forEach(slide=>{
+        slidePhotos.push(slide.src);
+    })
+}
 function startSlideShow(){
    // const slideShow=document.getElementById("slideShow");
     console.log(`index ${index}`);
