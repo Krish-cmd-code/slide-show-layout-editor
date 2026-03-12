@@ -4,14 +4,26 @@
 }
 body{
     background-color:maroon;
-     /* position:absolute; */
+     position:relative;
+     min-height: 100vh;
      /* display: flex; */
-    justify-content: center;
-    align-items: center;
+    /* justify-content: center; */
+    /* align-items: center; */
 }
- 
-.drag{
-    position:relative;
+
+*{
+  box-sizing: border-box;
+}
+
+.inputs{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding:5px;
+}
+.draggable{
+    /* width: fit-content; */
+    /* display:inline-block; */
 }
 
 .dropBox{
@@ -37,10 +49,10 @@ h3{
 }
 
 .dragon{
-    /* position:relative; */
+
 }
 button{
-    /* position: relative; */
+
 }
 
 .gallery{
@@ -48,6 +60,8 @@ button{
     /* justify-content: center; */
     flex-wrap: wrap;
     margin-bottom: 10px;
+    /* width:1.2em; */
+    /* height:1.2em; */
     
 }
 
@@ -56,6 +70,8 @@ button{
     /* justify-content: center; */
     flex-wrap: wrap;
     margin-bottom: 10px;
+    /* width:50rem; */
+    /* height:10rem; */
     
 }
 .galleryContainer{
@@ -94,7 +110,7 @@ button{
 #slideShow{
     width:200px;
     height:200px;
-    border:2px solid black;
+    border:5px solid green;
 }
 
 #slideShow img{

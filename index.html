@@ -7,33 +7,34 @@
     <link rel="stylesheet" href="slider.css">
 </head>
 <body>
+    <!-- <div class="inputs draggable">
+        
+    </div> -->
+
         <input type="file" id="optBtn" accept="/*image" multiple hidden>
-        <button class="dragon"><label for="optBtn">select images</label></button>
-        <button type="button" class="dragon" id="slideShowBtn">startSlideShow</button>
-        <button type="button" class="dragon" id="deleteBtn">deleteImages</button>
-        <button type="button" class="dragon" id="saveSlideShow">saveSlideShow</button>
+        <button  id="btn1" class="draggable" ><label for="optBtn">select images</label></button>
+        <button type="button"  id="slideShowBtn" class="draggable">startSlideShow</button>
+        <button type="button"  id="deleteBtn" class="draggable">deleteImages</button>
+        <button type="button"  id="saveSlideShow" class="draggable">saveSlideShow</button>
         <!-- <button type="button" id="reloadSlideShow">reloadSlideShow</button> -->
          <input type="file" id="reloadJson" accept=".json" hidden>
-         <button class="dragon"><label for="reloadJson">Load Json</label></button>
-        <button type="button" class="dragon" id="customize">Customize</button>
-        <button type="button" class="dragon" id="stopCustomize" disabled>stopCustomize</button>
-        <input type="number" class="dragon" id="delay" required placeholder="enter delay">
+         <button  id="btn2" class="draggable"><label for="reloadJson">Load Json</label></button>
+        <button type="button" id="customize" class="draggable">Customize</button>
+        <button type="button"  id="stopCustomize" class="draggable" disabled>stopCustomize</button>
+        <input type="number" id="delay" class="draggable" placeholder="enter delay">
         <!-- <button><label for="delay">Enter Delay</label></button> -->
-    <br>
-    <br>
-    <br>
-    <div class="galleryContainer">
+        
+    <div  id="galleryContainer" class="galleryContainer draggable">
         <h3>Gallery:</h3>
-        <div class="gallery drag" ></div>
+        <div class="gallery drag" id="gallery" ></div>
     </div>
-    <br>
     
-    <div id="reorderContainer" class="galleryContainer">
+    <div id="reorderContainer" class="galleryContainer draggable">
         <h3>Reorder images</h3><span class="dropBox" id="dropBox">DROPBOX</span><br><br><br>
         <div class="reorder" id="reorder"></div>
     </div>
     
-    <div id="slideShow" class="drag">
+    <div id="slideShow" class="galleryContainer draggable">
         <img id="previewImage">
         <!--  
             <div class="slideShowButton">
@@ -42,7 +43,6 @@
          -->
     </div>
 
-    <p id="demo"></p>
     <script src="slider.js"></script>
 </body>
 </html>

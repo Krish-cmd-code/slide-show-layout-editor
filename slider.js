@@ -2,23 +2,30 @@ let photos=[];
 let selected=[];
 let slides=[];
 let slidePhotos=[];
+let draggedCard=null;
+let draggElement=null;
+let layout={"btn1":{},"slideShowBtn":{},"deleteBtn":{},"saveSlideShow":{},"btn2":{},"customize":{},"stopCustomize":{},"delay":{},"galleryContainer":{},"reorderContainer":{},"slideShow":{}};
 let index=0;
 let slideInterval;
 const deleteBtn=document.getElementById("deleteBtn");
 const slideShow=document.getElementById("slideShowBtn");
 const saveSlideShow=document.getElementById("saveSlideShow");
+
+saveInitialLayout();
+
 // const reloadSlideShow=document.getElementById("reloadSlideShow");
 const loadJson=document.getElementById("reloadJson");
 let DELAY;
 const imageInput=document.getElementById("optBtn");
 
-let draggedCard=null;
+
 const dropBox=document.getElementById("dropBox");
 dropBox.addEventListener("dragover",(e)=>{
     e.preventDefault();
 });
 dropBox.addEventListener("drop",(e)=>{
     e.preventDefault();
+    e.stopPropagation();
     if(draggedCard){
         draggedCard.remove();
         draggedCard=null;
@@ -34,6 +41,7 @@ reorder.addEventListener("dragover",(e)=>{
 });
 reorder.addEventListener("drop",(e)=>{
     e.preventDefault();
+    e.stopPropagation();
     const id=e.dataTransfer.getData("photoId");
     console.log(id);
     // e.dataTransfer.setData("photoId",photo.id);
@@ -66,6 +74,7 @@ function applyDragToCardOfReorder(card){
     card.addEventListener("drop", (e) => {
 
         e.preventDefault();
+        e.stopPropagation();
 
         if (!draggedCard || draggedCard === card) return;
 
@@ -239,7 +248,7 @@ imageInput.addEventListener("change",function(e){
 
 
 function renderGallery(){
-let gallery=document.querySelector(".gallery");  //will select first galley item.
+let gallery=document.querySelector("#gallery");  //will select first galley item.
 // const card=document.querySelectorAll(".gallery .card");
 //         selected.length=0;
 //         card.forEach(card=>{
@@ -307,7 +316,7 @@ function addDragTo(card,photo){
 }
 function addPhotos(){
     photos=photos.filter(p=> !p.isSelected);
-    const card = document.querySelectorAll(".gallery .card");
+    const card = document.querySelectorAll("#gallery .card");
 
     // card.forEach(card=>{
     //     photos.push(card);
@@ -328,7 +337,7 @@ deleteBtn.addEventListener("click",function(){
             })
     */
         selected=[];
-        const card=document.querySelectorAll(".gallery .card");
+        const card=document.querySelectorAll("#gallery .card");
         card.forEach(card=>{
             if(card.children[0].checked){
                 console.log(`checked`);
@@ -353,7 +362,7 @@ slideShow.addEventListener("click",function(){
             return;
         }   
         slideShow.textContent="StopSlideShow";
-        const card=document.querySelectorAll(".gallery .card");
+        const card=document.querySelectorAll("#gallery .card");
         slides.length=0;
         // card.forEach(card=>{
         //     if(card.children[0].checked){
@@ -382,7 +391,7 @@ function addSlides(){
         });
 }
 
-function addSlidePhotos(){
+function addSlidePhotos(){  //for saving slide show.
     slidePhotos=[];
     slides.forEach(slide=>{
         slidePhotos.push(slide.src);
@@ -405,98 +414,226 @@ function startSlideShow(){
    
    // slideShow.innerHTML=previewImg;
 }
+
+const draggable=document.querySelectorAll(".draggable");
+draggable.forEach(ele=>{
+    ele.draggable=false;
+});
+
 const customize=document.getElementById("customize");
 const stopCustomize=document.getElementById("stopCustomize");
 
 let isClickCustomize=false;
-customize.addEventListener("click",(e)=>{
-    const buttons=document.querySelectorAll(".dragon");
-    buttons.forEach((button)=>{
-        /*
-        const rect = button.getBoundingClientRect();
-        const x=window.scrollX;
-        const y=window.scrollY;
-        console.log(`${rect.left}`);
-        console.log(`${rect.top}`);
-        document.body.appendChild(button);
-        button.style.position="absolute";
-        console.log(`${rect.left}`);
+const container=document.body;
+document.addEventListener("dragover", e => e.preventDefault());
 
-        button.style.left=x+rect.left+"px";
-        button.style.top=y+rect.top+"px";
-        console.log(`jola`);
-  
-        button.disabled=true;
-        */
-       const rect = button.getBoundingClientRect();
+function customizeDrag(e){
+    console.log(`eleemnt being dragged`);
+    console.log(`element is:`+e.id);
 
-    const left = rect.left + window.scrollX;
-    const top  = rect.top  + window.scrollY;
+    draggElement=e.target;
+    e.dataTransfer.setDragImage(draggElement, 0, 0);
 
-    // 2️ Lock size (prevents resize jump)
-    button.style.width = rect.width + "px";
-    button.style.height = rect.height + "px";
 
-    // 3️ Make absolute BEFORE moving in DOM
-    button.style.position = "absolute";
-    button.style.left = left + "px";
-    button.style.top = top + "px";
-    button.style.margin = "0";
-
-    // 4️ Now move to body
-    document.body.appendChild(button);
-
-    // 5️ Disable
-    button.disabled = true;
-
-    showOtherElements();
-    });
-    if(!isClickCustomize){
-        isClickCustomize=true;
-        // const btn = document.querySelectorAll("button");
-        const btn = document.querySelectorAll(".dragon");
-        const body = document.querySelector("body");
-        const stopCustomize=document.getElementById("stopCustomize");
-        stopCustomize.disabled=false;
-
-        btn.forEach((button)=>{
-         button.draggable=true;
-             button.addEventListener("dragstart",(e)=>{
-              console.log(`dragging started`);
-             });
-
-             button.addEventListener("dragend",(e)=>{
-             console.log (`dragend `);
-             button.style.left = e.pageX+"px";
-             button.style.top = e.pageY+"px";
-          });
-        });
-
-        body.draggable=true;
-        body.addEventListener("dragover",(e)=>{
-            e.preventDefault();
-        });
-        body.addEventListener("drop",(e)=>{
-
-        })
-    }else{
-
+    if(!draggElement.dataset.lockSize){
+        const rect = draggElement.getBoundingClientRect;
+        draggElement.style.height=rect.height+"px";
+        draggElement.style.width=rect.width+"px";
+        draggElement.dataset.lockSize=true;
     }
+    // const rect = draggElement.getBoundingClientRect();
+    // draggElement.style.width = rect.width + "px";
+    // draggElement.style.height = rect.height + "px";
+}
+
+customize.addEventListener("click",(e)=>{
+    console.log(`customize clicked`);
+    const customElement = document.querySelectorAll(".draggable");
+    customElement.forEach(ele=>{
+
+        enableCustomize(ele);
+
+        ele.addEventListener("dragstart",customizeDrag);
+    });
+    document.getElementById("previewImage").style.display="none";
+    alterCustomize();
+    stopCustomize.style.pointerEvents = "auto";
+    stopCustomize.disabled=false;
 });
 
+function enableCustomize(ele){
+    ele.draggable=true;
+    ele.disabled=true;  //if it is button.
+    ele.querySelectorAll("*").forEach(el=>{
+        el.style.pointerEvents="none";
+    });
+}
+
+function disableCustomize(ele){
+    ele.disabled=false;
+    ele.draggable=false;
+    ele.querySelectorAll("*").forEach(el=>{
+        el.style.pointerEvents="auto";
+    });
+
+}
 stopCustomize.addEventListener("click",(e)=>{
-    console.log(`stopcustomize clicked`);
-    const button=document.querySelectorAll("button");
-    button.forEach((button)=>{
-        button.disabled=false;
-    })
-        stopCustomize.disabled=true;
-        isClickCustomize=false;
-})
+    const customElement=document.querySelectorAll(".draggable");
+    customElement.forEach(ele=>{
+        disableCustomize(ele);
+        
+        ele.removeEventListener("dragstart",customizeDrag);
+    });
+    stopCustomize.style.pointerEvents = "none";
+    stopCustomize.disabled=true;
+    document.getElementById("previewImage").style.display="block";
+    removeEvent();
+});
+
+function removeEvent(){ //only for container element.
+    
+    container.removeEventListener("dragover",dragOverContainer);
+    container.removeEventListener("drop",dropContainer);
+}
+
+function dragOverContainer(e){
+    e.preventDefault();
+    e.stopPropagation();
+}
+
+function dropContainer(e){
+        e.preventDefault();
+        if(!draggElement)return;
+
+        const rect = draggElement.getBoundingClientRect();
+
+        console.log(`element gets dropped:`+draggElement);
+        draggElement.style.position="absolute";
+        // draggElement.style.left= e.pageX+"px";
+        // draggElement.style.top=e.pageY+"px";
+        draggElement.style.left = (e.pageX - rect.width/2) + "px";
+        draggElement.style.top = (e.pageY - rect.height/2) + "px";
+        savePosition(draggElement);
+        draggElement=null;
+}
+function alterCustomize(){
+    
+    container.addEventListener("dragover",dragOverContainer);
+    container.addEventListener("drop",dropContainer);
+
+}
+
+function savePosition(ele){
+    layout[ele.id]={
+        left: ele.style.left,
+        top: ele.style.top,
+        width: ele.style.width,
+        height: ele.style.height
+    }
+}
+
+function saveInitialLayout(){
+    let find;
+    Object.keys(layout).forEach(id=>{
+        const el=document.getElementById(id);
+        if(!el){console.log(`not find`);}
+        else{
+            const rect = el.getBoundingClientRect();
+            console.log(`find`);
+            layout[id]={
+                // left: el.style.left+"px",
+                // top: el.style.top+"px"
+                left:rect.left+window.scrollX+"px",
+                top:rect.top+window.scrollY+"px",
+                width:rect.width + "px",
+                height:rect.height + "px"
+            }
+        }
+    });
+
+    console.log(`initial layout is:`);
+    console.log(layout);
+}
+
+
+
+
+
+
+
+// customize.addEventListener("click",(e)=>{
+//     const buttons=document.querySelectorAll(".draggable");
+//     buttons.forEach((button)=>{
+//        const rect = button.getBoundingClientRect();
+
+//         const left = rect.left + window.scrollX;
+//         const top  = rect.top  + window.scrollY;
+
+//         // 2️ Lock size (prevents resize jump)
+//         button.style.width = rect.width + "px";
+//         button.style.height = rect.height + "px";
+
+//         // 3️ Make absolute BEFORE moving in DOM
+//         button.style.position = "absolute";
+//         button.style.left = left + "px";
+//         button.style.top = top + "px";
+//         button.style.margin = "0";
+
+//         // 4️ Now move to body
+//         document.body.appendChild(button);
+
+//         // 5️ Disable
+//         button.disabled = true;
+
+//         showOtherElements();
+//     });
+
+//     if(!isClickCustomize){
+//         isClickCustomize=true;
+//         // const btn = document.querySelectorAll("button");
+//         const btn = document.querySelectorAll(".draggable");
+//         const body = document.querySelector("body");
+//         const stopCustomize=document.getElementById("stopCustomize");
+//         stopCustomize.disabled=false;
+
+//         btn.forEach((button)=>{
+//          button.draggable=true;
+//              button.addEventListener("dragstart",(e)=>{
+//               console.log(`dragging started`);
+//              });
+
+//              button.addEventListener("dragend",(e)=>{
+//              console.log (`dragend `);
+//              button.style.left = e.pageX+"px";
+//              button.style.top = e.pageY+"px";
+//           });
+//         });
+
+//         body.draggable=true;
+//         body.addEventListener("dragover",(e)=>{
+//             e.preventDefault();
+//         });
+//         body.addEventListener("drop",(e)=>{
+
+//         })
+//     }else{
+
+//     }
+// });
+
+// stopCustomize.addEventListener("click",(e)=>{
+//     console.log(`stopcustomize clicked`);
+//     const button=document.querySelectorAll("button");
+//     button.forEach((button)=>{
+//         button.disabled=false;
+//     })
+//         stopCustomize.disabled=true;
+//         isClickCustomize=false;
+// })
 
 
 function showOtherElements(){
-    const gallery = document.querySelector(".gallery");
+    const gallery = document.querySelector("#gallery");
     const slideShow=document.getElementById("slideShow");
     if(gallery){
         gallery.style.border="2px solid black";
