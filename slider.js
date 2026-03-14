@@ -4,7 +4,8 @@ let slides=[];
 let slidePhotos=[];
 let draggedCard=null;
 let draggElement=null;
-let layout={"btn1":{},"slideShowBtn":{},"deleteBtn":{},"saveSlideShow":{},"btn2":{},"customize":{},"stopCustomize":{},"delay":{},"galleryContainer":{},"reorderContainer":{},"slideShow":{}};
+// let layout={"btn1":{},"slideShowBtn":{},"deleteBtn":{},"saveSlideShow":{},"btn2":{},"customize":{},"stopCustomize":{},"delay":{},"galleryContainer":{},"reorderContainer":{},"slideShow":{}};
+let layout={"d1":{},"d2":{},"d3":{},"d4":{},"d5":{},"d6":{},"d7":{},"galleryContainer":{},"reorderContainer":{},"slideShow":{}};
 let index=0;
 let slideInterval;
 const deleteBtn=document.getElementById("deleteBtn");
@@ -41,7 +42,8 @@ reorder.addEventListener("dragover",(e)=>{
 });
 reorder.addEventListener("drop",(e)=>{
     e.preventDefault();
-    e.stopPropagation();
+    // e.stopPropagation();
+    console.log(`something happened`);
     const id=e.dataTransfer.getData("photoId");
     console.log(id);
     // e.dataTransfer.setData("photoId",photo.id);
@@ -74,7 +76,6 @@ function applyDragToCardOfReorder(card){
     card.addEventListener("drop", (e) => {
 
         e.preventDefault();
-        e.stopPropagation();
 
         if (!draggedCard || draggedCard === card) return;
 
@@ -116,11 +117,14 @@ saveSlideShow.addEventListener("click", function () {
     // console.log(combinedImages);
     console.log(photos);
     console.log(slides);
+    saveInitialLayout();
+
     const data = {
         images:combinedImages,
         slideImages:slideImages,
         savedAt: new Date().toLocaleString(),
-        delay: document.getElementById("delay").value
+        delay: document.getElementById("delay").value,
+        layouts:layout
     };
         data.images.forEach(image=>{
             console.log(`isSelected:${image.isSelected}`);
@@ -208,6 +212,22 @@ function addJsonData(data){
                 card.appendChild(img);
                 reorder.appendChild(card);
             });
+
+    const elements=data.layouts;
+    console.log(`elements are`);
+    console.log(elements);
+    Object.keys(elements).forEach(id=>{
+        const ele=document.getElementById(id);
+        if(!ele){
+                console.log(`not found`);
+        }else{
+            ele.style.position="absolute";
+            ele.style.width=elements[id].width;
+            ele.style.height=elements[id].height;
+            ele.style.top=elements[id].top;
+            ele.style.left=elements[id].left;
+        }
+    });
 }
 /*
 reloadSlideShow.addEventListener("click",function(){
@@ -446,49 +466,129 @@ function customizeDrag(e){
     // draggElement.style.height = rect.height + "px";
 }
 
-customize.addEventListener("click",(e)=>{
-    console.log(`customize clicked`);
-    const customElement = document.querySelectorAll(".draggable");
-    customElement.forEach(ele=>{
+// customize.addEventListener("click",(e)=>{
+//     console.log(`customize clicked`);
+//     const customElement = document.querySelectorAll(".draggable");
+//     customElement.forEach(ele=>{
 
-        enableCustomize(ele);
+//         enableCustomize(ele);
 
-        ele.addEventListener("dragstart",customizeDrag);
-    });
-    document.getElementById("previewImage").style.display="none";
-    alterCustomize();
-    stopCustomize.style.pointerEvents = "auto";
-    stopCustomize.disabled=false;
-});
+//         ele.addEventListener("dragstart",customizeDrag);
+//     });
+//     document.getElementById("previewImage").style.display="none";
+//     alterCustomize();
+//     stopCustomize.style.pointerEvents = "auto";
+//     stopCustomize.disabled=false;
+// });
 
-function enableCustomize(ele){
-    ele.draggable=true;
-    ele.disabled=true;  //if it is button.
-    ele.querySelectorAll("*").forEach(el=>{
-        el.style.pointerEvents="none";
-    });
+function enableCustomize(){
+    // document.querySelectorAll(".draggable *").forEach(el=>{
+    //     el.style.pointerEvents = "none";
+    // });
+    document.body.classList.add("customizing");
 }
 
-function disableCustomize(ele){
-    ele.disabled=false;
-    ele.draggable=false;
-    ele.querySelectorAll("*").forEach(el=>{
-        el.style.pointerEvents="auto";
-    });
-
+function disableCustomize(){
+    // document.querySelectorAll(".draggable *").forEach(el=>{
+    //     el.style.pointerEvents = "auto";
+    // });
+    document.body.classList.remove("customizing");
 }
-stopCustomize.addEventListener("click",(e)=>{
-    const customElement=document.querySelectorAll(".draggable");
-    customElement.forEach(ele=>{
-        disableCustomize(ele);
+
+let dragEl = null;
+let offsetX = 0;
+let offsetY = 0;
+let customizeMode = false;
+
+const toggleBtn = document.getElementById("customize");
+
+toggleBtn.addEventListener("click", () => {
+    customizeMode = !customizeMode;
+    toggleBtn.textContent = customizeMode ? "Stop Customize" : "Customize";
+
+    // const customElement = document.querySelectorAll(".draggable");
+    // if(customizeMode){
         
-        ele.removeEventListener("dragstart",customizeDrag);
-    });
-    stopCustomize.style.pointerEvents = "none";
-    stopCustomize.disabled=true;
-    document.getElementById("previewImage").style.display="block";
-    removeEvent();
+    //     customElement.forEach(ele=>{
+
+    //        enableCustomize(ele);
+
+    //    });
+    //    document.getElementById("previewImage").style.display="none";
+    //    toggleBtn.style.pointerEvents = "auto";
+    //    toggleBtn.disabled=false;
+
+    // }else{
+    //     customElement.forEach(ele=>{
+    //         disableCustomize(ele);
+    //     });
+    // }
+
+    if(customizeMode){
+        enableCustomize();
+        toggleBtn.style.pointerEvents = "auto";
+        toggleBtn.disabled=false;
+    } else {
+        disableCustomize();
+    }
+
+    console.log("Customize mode:", customizeMode);
 });
+
+document.querySelectorAll(".draggable").forEach(el => {
+
+    el.addEventListener("mousedown", (e) => {
+
+        if(!customizeMode) return;   //  stop dragging
+
+        
+
+        const rect = el.getBoundingClientRect();
+
+        el.style.position = "absolute";
+        el.style.left = rect.left + "px";
+        el.style.top = rect.top + "px";
+
+        dragEl = el;
+
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+
+        // el.style.position = "absolute";
+        // el.style.zIndex = 1000;
+
+        document.addEventListener("mousemove", moveElement);
+        document.addEventListener("mouseup", stopDrag);
+    });
+
+});
+
+function moveElement(e){
+    if(!dragEl) return;
+
+    dragEl.style.left = (e.clientX - offsetX) + "px";
+    dragEl.style.top = (e.clientY - offsetY) + "px";
+}
+
+function stopDrag(){
+    document.removeEventListener("mousemove", moveElement);
+    document.removeEventListener("mouseup", stopDrag);
+    dragEl = null;
+}
+
+
+// stopCustomize.addEventListener("click",(e)=>{
+//     const customElement=document.querySelectorAll(".draggable");
+//     customElement.forEach(ele=>{
+//         disableCustomize(ele);
+        
+//         ele.removeEventListener("dragstart",customizeDrag);
+//     });
+//     stopCustomize.style.pointerEvents = "none";
+//     stopCustomize.disabled=true;
+//     document.getElementById("previewImage").style.display="block";
+//     removeEvent();
+// });
 
 function removeEvent(){ //only for container element.
     

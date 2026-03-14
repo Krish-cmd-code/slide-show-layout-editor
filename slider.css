@@ -6,8 +6,6 @@ body{
     background-color:maroon;
      position:relative;
      min-height: 100vh;
-    /* justify-content: center; */
-    /* align-items: center; */
 }
 
 *{
@@ -21,10 +19,18 @@ body{
     padding:5px;
 }
 .draggable{
+    padding:10px;
+    /* background:#eee; */
+    /* border:1px solid #999; */
+    /* width:fit-content; */
+    cursor:move;
     /* width: fit-content; */
     /* display:inline-block; */
 }
 
+.customizing .draggable *{
+    pointer-events: none;
+}
 .dropBox{
     width:200px;
     height:80px;
@@ -52,34 +58,30 @@ h3{
 }
 button{
 
+    z-index: 5;
+
 }
 
 .gallery{
     display: flex;
-    /* justify-content: center; */
     flex-wrap: wrap;
     overflow-y:auto;
     width: 70%;
-    height:200px;
+    height:210px;
     margin-bottom: 10px;
     position: relative;
-    /* width:1.2em; */
-    /* height:1.2em; */
     
 }
 
 .reorder{
     display: flex;
-    /* justify-content: center; */
     flex-wrap: wrap;
     overflow-y:auto;
     width: 70%;
-    height:200px;
+    height:210px;
     margin-bottom: 10px;
     position:relative;
     
-    /* width:50rem; */
-    /* height:10rem; */
     
 }
 .galleryContainer{
@@ -88,14 +90,10 @@ button{
     padding:10px;
 }
 #reorder{
-    /* width:100%; */
-    /* height:120px; */
-    /* margin-top:0px; */
     background-color: gray;
 }
 .card{
     border:5px solid green;
-    /* display: flex; */
     align-items: center;
     height: auto;
     justify-content: center;

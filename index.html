@@ -11,18 +11,29 @@
         
     </div> -->
 
-        <input type="file" id="optBtn" accept="/*image" multiple hidden>
-        <button  id="btn1" class="draggable" ><label for="optBtn">select images</label></button>
-        <button type="button"  id="slideShowBtn" class="draggable">startSlideShow</button>
-        <button type="button"  id="deleteBtn" class="draggable">deleteImages</button>
-        <button type="button"  id="saveSlideShow" class="draggable">saveSlideShow</button>
-        <!-- <button type="button" id="reloadSlideShow">reloadSlideShow</button> -->
-         <input type="file" id="reloadJson" accept=".json" hidden>
-         <button  id="btn2" class="draggable"><label for="reloadJson">Load Json</label></button>
-        <button type="button" id="customize" class="draggable">Customize</button>
-        <button type="button"  id="stopCustomize" class="draggable" disabled>stopCustomize</button>
-        <input type="number" id="delay" class="draggable" placeholder="enter delay">
-        <!-- <button><label for="delay">Enter Delay</label></button> -->
+        <div class="draggable" id="d1">
+            <input type="file" id="optBtn" accept="/*image" multiple hidden>
+            <button type="button"  id="btn1"><label for="optBtn">select images</label></button>
+        </div>
+        <div class="draggable" id="d2">
+            <button type="button"  id="slideShowBtn" >startSlideShow</button>
+        </div>
+        <div class="draggable" id="d3">
+            <button type="button"  id="deleteBtn">deleteImages</button>
+        </div>
+        <div class="draggable" id="d4">
+            <button type="button"  id="saveSlideShow">saveSlideShow</button>
+        </div>
+        <div class="draggable" id="d5">
+            <input type="file" id="reloadJson" accept=".json" hidden>
+            <button  id="btn2" ><label for="reloadJson">Load Json</label></button>
+        </div>
+        <div class="draggable" id="d6">
+            <button type="button" id="customize">Customize</button>
+        </div>
+        <div class="draggable" id="d7">
+            <input type="number" id="delay" placeholder="enter delay">
+        </div>
         
     <div  id="galleryContainer" class="galleryContainer draggable">
         <h3>Gallery:</h3>
