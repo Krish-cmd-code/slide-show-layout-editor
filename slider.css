@@ -6,7 +6,6 @@ body{
     background-color:maroon;
      position:relative;
      min-height: 100vh;
-     /* display: flex; */
     /* justify-content: center; */
     /* align-items: center; */
 }
@@ -59,7 +58,11 @@ button{
     display: flex;
     /* justify-content: center; */
     flex-wrap: wrap;
+    overflow-y:auto;
+    width: 70%;
+    height:200px;
     margin-bottom: 10px;
+    position: relative;
     /* width:1.2em; */
     /* height:1.2em; */
     
@@ -69,7 +72,12 @@ button{
     display: flex;
     /* justify-content: center; */
     flex-wrap: wrap;
+    overflow-y:auto;
+    width: 70%;
+    height:200px;
     margin-bottom: 10px;
+    position:relative;
+    
     /* width:50rem; */
     /* height:10rem; */
     
@@ -80,8 +88,8 @@ button{
     padding:10px;
 }
 #reorder{
-    width:100%;
-    height:120px;
+    /* width:100%; */
+    /* height:120px; */
     /* margin-top:0px; */
     background-color: gray;
 }
@@ -89,7 +97,10 @@ button{
     border:5px solid green;
     /* display: flex; */
     align-items: center;
+    height: auto;
     justify-content: center;
+    height: fit-content;
+    width: fit-content;
 }
 .card img{
     width:100px;

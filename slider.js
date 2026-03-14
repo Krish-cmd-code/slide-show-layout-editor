@@ -190,12 +190,24 @@ loadJson.addEventListener("change", function () {
 function addJsonData(data){
     photos=[];
     photos=data.images;
+    let reorder=document.getElementById("reorder"); 
+    reorder.innerHTML="";   //this will only for loadJson facility as we have to explicitly remove all elements from reorder.
     console.log(`now photos:`);
     console.log(photos);
     console.log(`now slides`);
     console.log(slides);
     slides=data.slideImages;
     renderGallery();
+
+    slides.forEach(src=>{
+                const card=document.createElement("div");
+                card.classList.add("card");
+                const img = document.createElement("img");
+                img.src=src;
+                applyDragToCardOfReorder(card);
+                card.appendChild(img);
+                reorder.appendChild(card);
+            });
 }
 /*
 reloadSlideShow.addEventListener("click",function(){
@@ -259,8 +271,6 @@ let gallery=document.querySelector("#gallery");  //will select first galley item
 //         });
 console.log(`enter into renderGallery`);
 gallery.innerHTML="";
-let reorder=document.getElementById("reorder");
-reorder.innerHTML="";
     photos.forEach(photo=>{
             let img=document.createElement("img");
             const card=document.createElement("div");
@@ -292,16 +302,6 @@ reorder.innerHTML="";
             card.append(img);
             gallery.append(card);
         });
-
-            slides.forEach(src=>{
-                const card=document.createElement("div");
-                card.classList.add("card");
-                const img = document.createElement("img");
-                img.src=src;
-                applyDragToCardOfReorder(card);
-                card.appendChild(img);
-                reorder.appendChild(card);
-            });
 
 
 
