@@ -229,30 +229,7 @@ function addJsonData(data){
         }
     });
 }
-/*
-reloadSlideShow.addEventListener("click",function(){
 
-    
-    photos.length=0;
-    photos=JSON.parse(localStorage.getItem("data"));
-    console.log(`photos are`);
-    console.log(photos);
-    renderGallery();
-    
-
-});
-*/
-/*
-document.getElementById("optBtn").addEventListener("change",function(e){
-    console.log(e);
-    
-    [...e.target.files].forEach(element => {
-            photos.push(URL.createObjectURL(element));   
-    });
-    renderGallery();
-    
-});
-*/
 
 imageInput.addEventListener("change",function(e){
     const files = Array.from(imageInput.files);
@@ -281,14 +258,6 @@ imageInput.addEventListener("change",function(e){
 
 function renderGallery(){
 let gallery=document.querySelector("#gallery");  //will select first galley item.
-// const card=document.querySelectorAll(".gallery .card");
-//         selected.length=0;
-//         card.forEach(card=>{
-//             if(card.children[0].checked){
-//                 console.log(`select pushed`);
-//                 selected.push(card.children[1]);//image gets push.
-//             }
-//         });
 console.log(`enter into renderGallery`);
 gallery.innerHTML="";
     photos.forEach(photo=>{
@@ -346,16 +315,6 @@ function addPhotos(){
 }
 
 deleteBtn.addEventListener("click",function(){
-    /*
-        const gallery=document.querySelector(".gallery");
-        console.log(gallery);
-        gallery.forEach(card =>{
-            let chkbox=card.querySelector(".select");
-            if(chkbox.checked){
-                console.log(`checked`);
-            }
-            })
-    */
         selected=[];
         const card=document.querySelectorAll("#gallery .card");
         card.forEach(card=>{
@@ -384,13 +343,7 @@ slideShow.addEventListener("click",function(){
         slideShow.textContent="StopSlideShow";
         const card=document.querySelectorAll("#gallery .card");
         slides.length=0;
-        // card.forEach(card=>{
-        //     if(card.children[0].checked){
-        //         slides.push(card.children[1]);//image gets push.
-        //     }
-        // });
 
-        
         // slides = photos.filter(photo => photo.isSelected);
         addSlides();
 
@@ -466,20 +419,6 @@ function customizeDrag(e){
     // draggElement.style.height = rect.height + "px";
 }
 
-// customize.addEventListener("click",(e)=>{
-//     console.log(`customize clicked`);
-//     const customElement = document.querySelectorAll(".draggable");
-//     customElement.forEach(ele=>{
-
-//         enableCustomize(ele);
-
-//         ele.addEventListener("dragstart",customizeDrag);
-//     });
-//     document.getElementById("previewImage").style.display="none";
-//     alterCustomize();
-//     stopCustomize.style.pointerEvents = "auto";
-//     stopCustomize.disabled=false;
-// });
 
 function enableCustomize(){
     // document.querySelectorAll(".draggable *").forEach(el=>{
@@ -505,24 +444,6 @@ const toggleBtn = document.getElementById("customize");
 toggleBtn.addEventListener("click", () => {
     customizeMode = !customizeMode;
     toggleBtn.textContent = customizeMode ? "Stop Customize" : "Customize";
-
-    // const customElement = document.querySelectorAll(".draggable");
-    // if(customizeMode){
-        
-    //     customElement.forEach(ele=>{
-
-    //        enableCustomize(ele);
-
-    //    });
-    //    document.getElementById("previewImage").style.display="none";
-    //    toggleBtn.style.pointerEvents = "auto";
-    //    toggleBtn.disabled=false;
-
-    // }else{
-    //     customElement.forEach(ele=>{
-    //         disableCustomize(ele);
-    //     });
-    // }
 
     if(customizeMode){
         enableCustomize();
@@ -576,19 +497,6 @@ function stopDrag(){
     dragEl = null;
 }
 
-
-// stopCustomize.addEventListener("click",(e)=>{
-//     const customElement=document.querySelectorAll(".draggable");
-//     customElement.forEach(ele=>{
-//         disableCustomize(ele);
-        
-//         ele.removeEventListener("dragstart",customizeDrag);
-//     });
-//     stopCustomize.style.pointerEvents = "none";
-//     stopCustomize.disabled=true;
-//     document.getElementById("previewImage").style.display="block";
-//     removeEvent();
-// });
 
 function removeEvent(){ //only for container element.
     
@@ -655,81 +563,6 @@ function saveInitialLayout(){
     console.log(layout);
 }
 
-
-
-
-
-
-
-// customize.addEventListener("click",(e)=>{
-//     const buttons=document.querySelectorAll(".draggable");
-//     buttons.forEach((button)=>{
-//        const rect = button.getBoundingClientRect();
-
-//         const left = rect.left + window.scrollX;
-//         const top  = rect.top  + window.scrollY;
-
-//         // 2️ Lock size (prevents resize jump)
-//         button.style.width = rect.width + "px";
-//         button.style.height = rect.height + "px";
-
-//         // 3️ Make absolute BEFORE moving in DOM
-//         button.style.position = "absolute";
-//         button.style.left = left + "px";
-//         button.style.top = top + "px";
-//         button.style.margin = "0";
-
-//         // 4️ Now move to body
-//         document.body.appendChild(button);
-
-//         // 5️ Disable
-//         button.disabled = true;
-
-//         showOtherElements();
-//     });
-
-//     if(!isClickCustomize){
-//         isClickCustomize=true;
-//         // const btn = document.querySelectorAll("button");
-//         const btn = document.querySelectorAll(".draggable");
-//         const body = document.querySelector("body");
-//         const stopCustomize=document.getElementById("stopCustomize");
-//         stopCustomize.disabled=false;
-
-//         btn.forEach((button)=>{
-//          button.draggable=true;
-//              button.addEventListener("dragstart",(e)=>{
-//               console.log(`dragging started`);
-//              });
-
-//              button.addEventListener("dragend",(e)=>{
-//              console.log (`dragend `);
-//              button.style.left = e.pageX+"px";
-//              button.style.top = e.pageY+"px";
-//           });
-//         });
-
-//         body.draggable=true;
-//         body.addEventListener("dragover",(e)=>{
-//             e.preventDefault();
-//         });
-//         body.addEventListener("drop",(e)=>{
-
-//         })
-//     }else{
-
-//     }
-// });
-
-// stopCustomize.addEventListener("click",(e)=>{
-//     console.log(`stopcustomize clicked`);
-//     const button=document.querySelectorAll("button");
-//     button.forEach((button)=>{
-//         button.disabled=false;
-//     })
-//         stopCustomize.disabled=true;
-//         isClickCustomize=false;
-// })
 
 
 function showOtherElements(){
